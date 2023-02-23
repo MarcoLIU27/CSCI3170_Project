@@ -1,2 +1,2 @@
-# CSCI3170_Project
+# CSCI3170 Project-Online Ordering System for Books
 CSCI3170 Project
