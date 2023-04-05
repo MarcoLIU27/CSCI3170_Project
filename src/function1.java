@@ -85,23 +85,26 @@ public class function1 {
         String query = "INSERT INTO " + table + "(" + columns + ") VALUES (?, ?, ?, ?, ?)";
         PreparedStatement statement = connection.prepareStatement(query);
         BufferedReader reader = new BufferedReader(new FileReader(file));
-        int lineNumber = 0;
-        String line = null;
-        while ((line = reader.readLine()) != null) {
-            lineNumber++;
-            String[] fields = line.split(",");
-            if (fields.length != 5) {
-                throw new Exception("Invalid data format at line " + lineNumber + " in " + file);
+        try {
+            int lineNumber = 0;
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                lineNumber++;
+                String[] fields = line.split(",");
+                if (fields.length != 5) {
+                    throw new Exception("Invalid data format at line " + lineNumber + " in " + file);
+                }
+                statement.setString(1, fields[0]);
+                statement.setString(2, fields[1]);
+                statement.setString(3, fields[2]);
+                statement.setInt(4, Integer.parseInt(fields[3]));
+                statement.setInt(5, Integer.parseInt(fields[4]));
+                statement.executeUpdate();
             }
-            statement.setString(1, fields[0]);
-            statement.setString(2, fields[1]);
-            statement.setString(3, fields[2]);
-            statement.setInt(4, Integer.parseInt(fields[3]));
-            statement.setInt(5, Integer.parseInt(fields[4]));
-            statement.executeUpdate();
+        } finally {
+            statement.close();
+            reader.close();
         }
-        statement.close();
-        reader.close();
     }
 
     public static void dropTable(Connection conn) {
