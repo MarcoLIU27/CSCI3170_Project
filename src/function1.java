@@ -3,44 +3,32 @@ import java.io.*;
 
 public class function1 {
     public static void initialize(Connection conn) {
-        Statement stmt = null;
-        try {
-            stmt = conn.createStatement();
-            String sql = "CREATE TABLE Book ( " +
-                    "ISBN VARCHAR2(13) NOT NULL, " +
-                    "Title VARCHAR2(100) NOT NULL, " +
-                    "Price NUMBER(10,0) NOT NULL, " +
-                    "InventoryQuantity NUMBER(10,0) NOT NULL, " +
-                    "PRIMARY KEY (ISBN), " +
-                    "CHECK (REGEXP_LIKE(ISBN, '^\\d{1}-\\d{4}-\\d{4}-\\d{1}$')), " +
-                    "CHECK (Title NOT LIKE '%\\_%' ESCAPE '\\'), " +
-                    "CHECK (Title NOT LIKE '%\\%%' ESCAPE '\\'), " +
-                    "CHECK (Price >= 0), " +
-                    "CHECK (InventoryQuantity >= 0) " +
-                    ")";
+        try (Statement stmt = conn.createStatement()) {
+            String sql = "CREATE TABLE Book_table ( ISBN VARCHAR2(13) PRIMARY KEY, Title VARCHAR2(100) NOT NULL, Authors VARCHAR2(250) NOT NULL, Price NUMBER(10,2) NOT NULL, Inventory_Quantity NUMBER(10) NOT NULL )";
             stmt.executeUpdate(sql);
+            System.out.println("Book table created successfully!");
 
-            sql = "CREATE TABLE Customer ( UID VARCHAR(10) NOT NULL, Name VARCHAR(50) NOT NULL, Address VARCHAR(200) NOT NULL, PRIMARY KEY (UID), CHECK (Name NOT LIKE '%[_%]%' AND Address NOT LIKE '%[_%]%') )";
+            sql = "CREATE TABLE Customer_table ( \"UID\" VARCHAR2(10) PRIMARY KEY, \"Name\" VARCHAR2(50) NOT NULL, \"Address\" VARCHAR2(200) NOT NULL )";
             stmt.executeUpdate(sql);
+            System.out.println("Customer_table table created successfully!");
+            sql = "ALTER TABLE Customer_table ADD CONSTRAINT address_components CHECK (\"Address\" LIKE '%\\(%\\)%,%')";
+            stmt.executeUpdate(sql);
+            System.out.println("Address check constraint added successfully to Customer_table!");
 
-            sql = "CREATE TABLE Order ( OID VARCHAR(8) NOT NULL, UID VARCHAR(10) NOT NULL, OrderDate DATE, OrderISBN VARCHAR(13), OrderQuantity INT, ShippingStatus VARCHAR(10), PRIMARY KEY (OID), FOREIGN KEY (UID) REFERENCES Customer(UID), FOREIGN KEY (OrderISBN) REFERENCES Book(ISBN) )";
+            sql = "CREATE TABLE Order_table ( \"OID\" VARCHAR2(8) PRIMARY KEY, \"UID\" VARCHAR2(10) NOT NULL, \"OrderDate\" VARCHAR2(20) NOT NULL, \"OrderISBN\" VARCHAR2(13) NOT NULL, \"OrderQuantity\" NUMBER(10) NOT NULL, \"ShippingStatus\" VARCHAR2(10) NOT NULL, FOREIGN KEY (\"UID\") REFERENCES Customer_table(\"UID\"), FOREIGN KEY (\"OrderISBN\") REFERENCES Book_table(\"ISBN\") )";
             stmt.executeUpdate(sql);
+            System.out.println("Order_table table created successfully!");
 
-            sql = "CREATE TABLE contain (OID VARCHAR(8), ISBN VARCHAR(13), Quantity INT, FOREIGN KEY (OID) REFERENCES Order(OID), FOREIGN KEY (ISBN) REFERENCES Book(ISBN), PRIMARY KEY (OID, ISBN))";
+            sql = "CREATE TABLE contain (OID VARCHAR2(8), ISBN VARCHAR2(13), Quantity INT, FOREIGN KEY (OID) REFERENCES Order_table(OID), FOREIGN KEY (ISBN) REFERENCES Book_table(ISBN), PRIMARY KEY (OID, ISBN))";
             stmt.executeUpdate(sql);
+            System.out.println("contain table created successfully!");
 
-            sql = "CREATE TABLE make (UID VARCHAR(10), OID VARCHAR(8), FOREIGN KEY (UID) REFERENCES Customer(UID), FOREIGN KEY (OID) REFERENCES Order(OID), PRIMARY KEY (UID, OID))";
+            sql = "CREATE TABLE make (\"UID\" VARCHAR2(10), \"OID\" VARCHAR2(8), FOREIGN KEY (\"UID\") REFERENCES Customer_table(\"UID\"), FOREIGN KEY (\"OID\") REFERENCES Order_table(\"OID\"), PRIMARY KEY (\"UID\", \"OID\"))";
             stmt.executeUpdate(sql);
-            System.out.println("All the tables are created!");
-        } catch (Exception e) {
-            System.out.println("Error: " + e.getMessage());
-        } finally {
-            try {
-                if (stmt != null)
-                    stmt.close();
-            } catch (SQLException e) {
-                System.out.println("Error: " + e.getMessage());
-            }
+            System.out.println("make table created successfully!");
+
+        } catch (SQLException e) {
+            System.out.println("CREATE TABLE Error: " + e.getMessage());
         }
     }
 
@@ -59,7 +47,7 @@ public class function1 {
     }
 
     private static void insertBooks(Connection connection, String file) throws Exception {
-        String query = "INSERT INTO Book(ISBN, Title, Authors, Price, Inventory_Quantity) VALUES (?, ?, ?, ?, ?)";
+        String query = "INSERT INTO Book_table(ISBN, Title, Authors, Price, Inventory_Quantity) VALUES (?, ?, ?, ?, ?)";
         PreparedStatement statement = connection.prepareStatement(query);
         BufferedReader reader = new BufferedReader(new FileReader(file));
         String line = null;
@@ -77,7 +65,7 @@ public class function1 {
     }
 
     private static void insertCustomers(Connection connection, String file) throws Exception {
-        String query = "INSERT INTO Customer(UID, Name, Address) VALUES (?, ?, ?)";
+        String query = "INSERT INTO Customer_table(UID, Name, Address) VALUES (?, ?, ?)";
         PreparedStatement statement = connection.prepareStatement(query);
         BufferedReader reader = new BufferedReader(new FileReader(file));
         String line = null;
@@ -93,7 +81,7 @@ public class function1 {
     }
 
     private static void insertOrders(Connection connection, String file) throws Exception {
-        String query = "INSERT INTO Order(OID, UID, Order_Date, Order_ISBN, Order_Quantity, Shipping_Status) VALUES (?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO Order_table(OID, UID, Order_Date, Order_ISBN, Order_Quantity, Shipping_Status) VALUES (?, ?, ?, ?, ?, ?)";
         PreparedStatement statement = connection.prepareStatement(query);
         BufferedReader reader = new BufferedReader(new FileReader(file));
         String line = null;
@@ -113,41 +101,67 @@ public class function1 {
 
     public static void dropTable(Connection conn) {
         try (Statement stmt = conn.createStatement()) {
-            stmt.executeUpdate(
-                    "DROP TABLE IF EXISTS Order; DROP TABLE IF EXISTS Book; DROP TABLE IF EXISTS Customer; DROP TABLE IF EXISTS contain; DROP TABLE IF EXISTS make;");
-            System.out.println("ALL tables dropped successfully.");
+            try {
+                stmt.executeUpdate("DROP TABLE Book_table");
+                System.out.println("Book_table dropped successfully.");
+            } catch (SQLException e) {
+                System.out.println("Book_table does not exist.");
+            }
+
+            try {
+                stmt.executeUpdate("DROP TABLE Customer_table");
+                System.out.println("Customer_table dropped successfully.");
+            } catch (SQLException e) {
+                System.out.println("Customer_table does not exist.");
+            }
+
+            try {
+                stmt.executeUpdate("DROP TABLE Order_table");
+                System.out.println("Order_table dropped successfully.");
+            } catch (SQLException e) {
+                System.out.println("Order_table does not exist.");
+            }
+
+            try {
+                stmt.executeUpdate("DROP TABLE contain");
+                System.out.println("contain table dropped successfully.");
+            } catch (SQLException e) {
+                System.out.println("contain table does not exist.");
+            }
+
+            try {
+                stmt.executeUpdate("DROP TABLE make");
+                System.out.println("make table dropped successfully.");
+            } catch (SQLException e) {
+                System.out.println("make table does not exist.");
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public static void countRecord(Connection conn) {
-
-        try {
-            Statement stmt = conn.createStatement();
-
+    public static void countRecords(Connection conn) {
+        try (Statement stmt = conn.createStatement()) {
             // Count the number of records in the Books table
-            ResultSet rs = stmt.executeQuery("SELECT COUNT(*) FROM Book");
-            rs.next();
-            int numBooks = rs.getInt(1);
+            try (ResultSet rs = stmt.executeQuery("SELECT COUNT(*) FROM Book_table")) {
+                rs.next();
+                int numBooks = rs.getInt(1);
+                System.out.println("+ Database Records: Books (" + numBooks + ")");
+            }
 
             // Count the number of records in the Customers table
-            rs = stmt.executeQuery("SELECT COUNT(*) FROM Customer");
-            rs.next();
-            int numCustomers = rs.getInt(1);
+            try (ResultSet rs = stmt.executeQuery("SELECT COUNT(*) FROM Customer_table")) {
+                rs.next();
+                int numCustomers = rs.getInt(1);
+                System.out.println("+ Database Records: Customers (" + numCustomers + ")");
+            }
 
             // Count the number of records in the Orders table
-            rs = stmt.executeQuery("SELECT COUNT(*) FROM Order");
-            rs.next();
-            int numOrders = rs.getInt(1);
-
-            // Print the results to the screen
-            System.out.println("+ Database Records: Books (" + numBooks + "), Customers (" + numCustomers
-                    + "), Orders (" + numOrders + ")");
-
-            // Close the ResultSet and Statement objects
-            rs.close();
-            stmt.close();
+            try (ResultSet rs = stmt.executeQuery("SELECT COUNT(*) FROM Order_table")) {
+                rs.next();
+                int numOrders = rs.getInt(1);
+                System.out.println("+ Database Records: Orders (" + numOrders + ")");
+            }
         } catch (SQLException e) {
             System.out.println("SQL Exception: " + e.getMessage());
         }

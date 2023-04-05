@@ -29,7 +29,7 @@ public class App {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
             String formattedDate = now.format(formatter);
             System.out.println("+ System Date: " + formattedDate);
-            function1.countRecord(conn);
+            function1.countRecords(conn);
             System.out.println("> 1. Database Initialization");
             System.out.println("> 2. Customer Operation (not implemented yet)");
             System.out.println("> 3. Bookstore Operation (not implemented yet)");
