@@ -1,15 +1,15 @@
-978-0545582935, Harry Potter and the Sorcerer's Stone, J.K. Rowling, 10, 50
-978-0545582881, Harry Potter and the Chamber of Secrets, J.K. Rowling, 12, 40
-978-0545582911, Harry Potter and the Prisoner of Azkaban, J.K. Rowling, 14, 30
-978-0545582959, Harry Potter and the Goblet of Fire, J.K. Rowling, 16, 20
-978-0545585004, Harry Potter and the Order of Phoenix, J.K. Rowling, 18, 10
-978-0545582997, Harry Potter and the Half-Blood Prince, J.K. Rowling, 20, 5
-978-0545583017, Harry Potter and the Deathly Hallows, J.K. Rowling, 22, 5
-978-0061122415, To Kill a Mockingbird, Harper Lee, 8, 30
-978-0140283331, 1984, George Orwell, 9, 25
-978-0062066045, The Great Gatsby, F. Scott Fitzgerald, 7, 35
-978-0547928227, The Hobbit, J.R.R. Tolkien, 10, 45
-978-0261103573, The Lord of the Rings, J.R.R. Tolkien, 25, 15
-978-0451524935, Animal Farm, George Orwell, 6, 40
-978-0060850524, The Catcher in the Rye, J.D. Salinger, 5, 50
-978-0061120084, The Chronicles of Narnia, C.S. Lewis, 15, 10
+1-2345-6789-0,The Catcher in the Rye,J.D. Salinger,20,100
+2-3456-7890-1,To Kill a Mockingbird,Harper Lee,25,80
+3-4567-8901-2,1984,George Orwell,18,120
+4-5678-9012-3,Animal Farm,George Orwell,15,150
+5-6789-0123-4,Brave New World,Aldous Huxley,22,90
+6-7890-1234-5,Fahrenheit 451,Ray Bradbury,17,110
+7-8901-2345-6,The Great Gatsby,F. Scott Fitzgerald,24,75
+8-9012-3456-7,Pride and Prejudice,Jane Austen,30,60
+9-0123-4567-8,The Adventures of Huckleberry Finn,Mark Twain,20,95
+0-1234-5678-9,The Grapes of Wrath,John Steinbeck,19,105
+1-2345-6789-1,To the Lighthouse,Virginia Woolf,26,70
+2-3456-7890-2,The Lord of the Rings,J.R.R. Tolkien,35,50
+3-4567-8901-3,The Hitchhiker's Guide to the Galaxy,Douglas Adams,16,125
+4-5678-9012-4,Nineteen Eighty-Four: The Annotated Edition,George Orwell,28,65
+5-6789-0123-5,The Sun Also Rises,Ernest Hemingway,21,85
