@@ -1,11 +1,12 @@
+package models;
 import java.sql.*;
 import java.io.*;
 
-public class function1 {
+public class Database {
 
     final String[] tableNames = { "Book_table", "Customer_table", "Order_table", "contain", "make" };
 
-    public static void initialize(Connection conn) {
+    public static void createTable(Connection conn) {
         try (Statement stmt = conn.createStatement()) {
             String sql = "CREATE TABLE Book_table ("
                     + "ISBN VARCHAR2(13) PRIMARY KEY,"
@@ -67,9 +68,9 @@ public class function1 {
     }
 
     public static void loadInitData(Connection conn) {
-        String booksFile = "books.txt";
-        String customersFile = "customers.txt";
-        String ordersFile = "orders.txt";
+        String booksFile = "../data/books.txt";
+        String customersFile = "../data/customers.txt";
+        String ordersFile = "../data/orders.txt";
         try {
             insertData(conn, booksFile, "Book_table", "ISBN, Title, Authors, Price, Inventory_Quantity");
             insertData(conn, customersFile, "Customer_table", "UID, Name, Address");
