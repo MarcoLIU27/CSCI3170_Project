@@ -12,7 +12,7 @@ public class App {
             Class.forName("oracle.jdbc.driver.OracleDriver");
             conn = DriverManager.getConnection("jdbc:oracle:thin:@//db18.cse.cuhk.edu.hk:1521/oradb.cse.cuhk.edu.hk",
                     "h042", "KlairkEe");
-            System.out.println("Database connection established");
+            //System.out.println("Database connection established");
         } catch (ClassNotFoundException e) {
             System.out.println("Error: Oracle JDBC driver not found");
             return;

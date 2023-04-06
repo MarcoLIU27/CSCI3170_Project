@@ -14,4 +14,4 @@
 3-4567-8901-3	The Hitchhiker's Guide to the Galaxy	Douglas Adams	16	125
 4-5678-9012-4	Nineteen Eighty-Four: The Annotated Edition	George Orwell	28	65
 5-6789-0123-5	The Sun Also Rises	Ernest Hemingway	21	85
-8-6789-8743-4	Deep Learning	Ian Goodfellow,Yoshua Bengio,Aaron Courville	20	170
+8-6789-8743-4	Deep Learning	Ian Goodfellow,Yoshua Bengio,Aaron Courville	20	20
