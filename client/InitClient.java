@@ -1,18 +1,16 @@
 package client;
 
 import java.sql.Connection;
-import java.util.Scanner;
 import models.*;
 
 public class InitClient implements ClientInterface {
     private Connection conn;
-    private Scanner scanner;
 
     public InitClient(Connection conn) {
         this.conn = conn;
-        this.scanner = new Scanner(System.in);
     }
 
+    @Override
     public void clientPage() {
         System.out.println("Database Initializing");
         System.out.println();

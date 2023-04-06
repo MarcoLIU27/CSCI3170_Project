@@ -130,7 +130,6 @@ public class Database {
                 if (fields.length != 3) {
                     throw new Exception("Invalid data format at line " + lineNumber + " in " + file);
                 }
-                System.out.println(fields[0]);
                 statement.setString(1, fields[0]);
                 statement.setString(2, fields[1]);
                 statement.setString(3, fields[2]);
@@ -288,5 +287,14 @@ public class Database {
         } catch (SQLException e) {
             System.out.println("SQL Exception: " + e.getMessage());
         }
+    }
+
+    public static void updateOrderStatus(Connection conn) {
+    }
+
+    public static void queryOrderByStatus(Connection conn) {
+    }
+
+    public static void queryMostPopularBook(Connection conn) {
     }
 }
