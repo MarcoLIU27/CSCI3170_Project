@@ -25,28 +25,45 @@ public class BookstoreClient implements ClientInterface {
                 System.out.println();
                 switch (userInput) {
                     case 1:
-                        Database.updateOrderStatus(conn);
+                        Database.updateOrderStatus(conn, getOID());
                         break;
                     case 2:
-                        Database.queryOrderByStatus(conn);    
+                        Database.queryOrderByStatus(conn, getStatus());
                         break;
                     case 3:
-                        Database.queryMostPopularBook(conn);   
+                        Database.queryMostPopularBooks(conn, getTopN());
                         break;
                     case 4:
                         return;
                     default:
-                        System.out.println("Invalid input");
+                        System.out.println("Invalid input\n");
                         break;
                 }
             } catch (InputMismatchException e) {
-                System.out.println("Error: Please enter a valid integer");
+                System.out.println("Error: Please enter a valid integer\n");
                 scanner.nextLine(); // consume the invalid input
             }
-            
         }
-
     }
+
+    private String getStatus() {
+        System.out.print("Enter the shipping status: ");
+        String userInput = scanner.nextLine();
+        return userInput;
+    }
+
+    private String getOID() {
+        System.out.print("Enter the order ID: ");
+        String userInput = scanner.nextLine();
+        return userInput;
+    }
+    
+    private int getTopN() {
+        System.out.print("Enter the value of N: ");
+        int userInput = scanner.nextInt();
+        return userInput;
+    }
+
     public void printBookstorePage() {
         System.out.println("===== Welcome to Book Ordering Management System =====");
         LocalDateTime now = LocalDateTime.now();
@@ -56,7 +73,7 @@ public class BookstoreClient implements ClientInterface {
         Database.countRecords(conn);
         System.out.println("> 1. Order Update: Update the shipping status of an order");
         System.out.println("> 2. Order Query: Query orders by shipping status");
-        System.out.println("> 3. Most Popular Book: Search for the Most Popular Book");
+        System.out.println("> 3. Most Popular Books: Search for Top N Popular Books");
         System.out.println("> 4. Return to the main menu");
         System.out.println(">>> Please Enter Your Query:");
     }

@@ -41,12 +41,12 @@ public class MainClient implements ClientInterface{
                         scanner.close();
                         return;
                     default:
-                        System.out.println("Invalid input");
+                        System.out.println("Invalid input\n");
                         break;
                 }
                 if (newClientPage != null) newClientPage.clientPage();
             } catch (InputMismatchException e) {
-                System.out.println("Error: Please enter a valid integer");
+                System.out.println("Error: Please enter a valid integer\n");
                 scanner.nextLine(); // consume the invalid input
             }
             
@@ -61,8 +61,8 @@ public class MainClient implements ClientInterface{
         System.out.println("+ System Date: " + formattedDate);
         Database.countRecords(conn);
         System.out.println("> 1. Database Initialization");
-        System.out.println("> 2. Customer Operation (not implemented yet)");
-        System.out.println("> 3. Bookstore Operation (not implemented yet)");
+        System.out.println("> 2. Customer Operations");
+        System.out.println("> 3. Bookstore Operations");
         System.out.println("> 4. Quit");
         System.out.println(">>> Please Enter Your Query:");
     }
