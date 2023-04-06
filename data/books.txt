@@ -1,15 +1,17 @@
-1-2345-6789-0,The Catcher in the Rye,J.D. Salinger,20,100
-2-3456-7890-1,To Kill a Mockingbird,Harper Lee,25,80
-3-4567-8901-2,1984,George Orwell,18,120
-4-5678-9012-3,Animal Farm,George Orwell,15,150
-5-6789-0123-4,Brave New World,Aldous Huxley,22,90
-6-7890-1234-5,Fahrenheit 451,Ray Bradbury,17,110
-7-8901-2345-6,The Great Gatsby,F. Scott Fitzgerald,24,75
-8-9012-3456-7,Pride and Prejudice,Jane Austen,30,60
-9-0123-4567-8,The Adventures of Huckleberry Finn,Mark Twain,20,95
-0-1234-5678-9,The Grapes of Wrath,John Steinbeck,19,105
-1-2345-6789-1,To the Lighthouse,Virginia Woolf,26,70
-2-3456-7890-2,The Lord of the Rings,J.R.R. Tolkien,35,50
-3-4567-8901-3,The Hitchhiker's Guide to the Galaxy,Douglas Adams,16,125
-4-5678-9012-4,Nineteen Eighty-Four: The Annotated Edition,George Orwell,28,65
-5-6789-0123-5,The Sun Also Rises,Ernest Hemingway,21,85
+1-2345-0000-1	Database system concepts	Abraham Silberschatz,Henry F. Korth,S. Sudarshan	30	100
+1-2345-6789-0	The Catcher in the Rye	J.D. Salinger	20	100
+2-3456-7890-1	To Kill a Mockingbird	Harper Lee	25	80
+3-4567-8901-2	1984	George Orwell	18	120
+4-5678-9012-3	Animal Farm	George Orwell	15	150
+5-6789-0123-4	Brave New World	Aldous Huxley	22	90
+6-7890-1234-5	Fahrenheit 451	Ray Bradbury	17	110
+7-8901-2345-6	The Great Gatsby	F. Scott Fitzgerald	24	75
+8-9012-3456-7	Pride and Prejudice	Jane Austen	30	60
+9-0123-4567-8	The Adventures of Huckleberry Finn	Mark Twain	20	95
+0-1234-5678-9	The Grapes of Wrath	John Steinbeck	19	105
+1-2345-6789-1	To the Lighthouse	Virginia Woolf	26	70
+2-3456-7890-2	The Lord of the Rings	J.R.R. Tolkien	35	50
+3-4567-8901-3	The Hitchhiker's Guide to the Galaxy	Douglas Adams	16	125
+4-5678-9012-4	Nineteen Eighty-Four: The Annotated Edition	George Orwell	28	65
+5-6789-0123-5	The Sun Also Rises	Ernest Hemingway	21	85
+8-6789-8743-4	Deep Learning	Ian Goodfellow,Yoshua Bengio,Aaron Courville	20	170
