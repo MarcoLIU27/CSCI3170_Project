@@ -1,4 +1,5 @@
 package models;
+
 import java.sql.*;
 import java.io.*;
 import java.text.ParseException;
@@ -229,6 +230,7 @@ public class Database {
         try (Statement stmt = conn.createStatement()) {
             String query = "SELECT * FROM " + tableName;
             try (ResultSet rs = stmt.executeQuery(query)) {
+                System.out.println("All Columns in " + tableName + ":");
                 ResultSetMetaData rsmd = rs.getMetaData();
                 int columnsNumber = rsmd.getColumnCount();
                 for (int i = 1; i <= columnsNumber; i++) {
