@@ -7,6 +7,8 @@ public class Database {
     final String[] tableNames = { "Book_table", "Customer_table", "Order_table", "contain", "make" };
 
     public static void createTable(Connection conn) {
+
+
         try (Statement stmt = conn.createStatement()) {
             String sql = "CREATE TABLE Book_table ("
                     + "ISBN VARCHAR2(13) PRIMARY KEY,"
@@ -25,8 +27,8 @@ public class Database {
                     + "\"Name\" VARCHAR2(50) NOT NULL,"
                     + "\"Address\" VARCHAR2(200) NOT NULL,"
                     + "CONSTRAINT Name_format CHECK (NOT REGEXP_LIKE(\"Name\", '[%_]')),"
-                    + "CONSTRAINT Address_format CHECK (NOT REGEXP_LIKE(\"Address\", '[%_]')),"
-                    + "CONSTRAINT Address_components CHECK (\"Address\" LIKE '%(%)%,%'))";
+                    + "CONSTRAINT Address_format CHECK (NOT REGEXP_LIKE(\"Address\", '[%_]')))";
+            // + "CONSTRAINT Address_components CHECK (\"Address\" LIKE '%(%),%'))";
             stmt.executeUpdate(sql);
             System.out.println("Customer_table table created successfully!");
 
@@ -37,30 +39,11 @@ public class Database {
                     + "\"OrderISBN\" VARCHAR2(13) NOT NULL,"
                     + "\"OrderQuantity\" NUMBER(10) NOT NULL,"
                     + "\"ShippingStatus\" VARCHAR2(10) NOT NULL,"
+                    + "CONSTRAINT ShippingStatus_format CHECK (\"ShippingStatus\" IN ('ordered', 'shipped', 'received')),"
                     + "FOREIGN KEY (\"UID\") REFERENCES Customer_table(\"UID\"),"
-                    + "FOREIGN KEY (\"OrderISBN\") REFERENCES Book_table(\"ISBN\"),"
-                    + "CONSTRAINT ShippingStatus_format CHECK (\"ShippingStatus\" IN ('ordered', 'shipped', 'received')))";
+                    + "FOREIGN KEY (\"OrderISBN\") REFERENCES Book_table(\"ISBN\"))";
             stmt.executeUpdate(sql);
             System.out.println("Order_table table created successfully!");
-
-            sql = "CREATE TABLE contain ("
-                    + "OID VARCHAR2(8),"
-                    + "ISBN VARCHAR2(13),"
-                    + "Quantity INT,"
-                    + "FOREIGN KEY (OID) REFERENCES Order_table(OID),"
-                    + "FOREIGN KEY (ISBN) REFERENCES Book_table(ISBN),"
-                    + "PRIMARY KEY (OID, ISBN))";
-            stmt.executeUpdate(sql);
-            System.out.println("contain table created successfully!");
-
-            sql = "CREATE TABLE make ("
-                    + "\"UID\" VARCHAR2(10),"
-                    + "\"OID\" VARCHAR2(8),"
-                    + "FOREIGN KEY (\"UID\") REFERENCES Customer_table(\"UID\"),"
-                    + "FOREIGN KEY (\"OID\") REFERENCES Order_table(\"OID\"),"
-                    + "PRIMARY KEY (\"UID\", \"OID\"))";
-            stmt.executeUpdate(sql);
-            System.out.println("make table created successfully!");
 
         } catch (SQLException e) {
             System.out.println("CREATE TABLE Error: " + e.getMessage());
@@ -85,8 +68,10 @@ public class Database {
     private static void insertData(Connection connection, String file, String table, String columns) throws Exception {
         String query = "INSERT INTO " + table + "(" + columns + ") VALUES (?, ?, ?, ?, ?)";
         PreparedStatement statement = connection.prepareStatement(query);
-        BufferedReader reader = new BufferedReader(new FileReader(file));
+        BufferedReader reader = null;
         try {
+            reader = new BufferedReader(new FileReader(file));
+            // Read each line of the file and insert the data into the database
             int lineNumber = 0;
             String line = null;
             while ((line = reader.readLine()) != null) {
@@ -98,54 +83,47 @@ public class Database {
                 statement.setString(1, fields[0]);
                 statement.setString(2, fields[1]);
                 statement.setString(3, fields[2]);
-                statement.setInt(4, Integer.parseInt(fields[3]));
-                statement.setInt(5, Integer.parseInt(fields[4]));
+                try {
+                    statement.setInt(4, Integer.parseInt(fields[3]));
+                } catch (NumberFormatException e) {
+                    throw new Exception("Invalid data format at line " + lineNumber + " in " + file);
+                }
+                try {
+                    statement.setInt(5, Integer.parseInt(fields[4]));
+                } catch (NumberFormatException e) {
+                    throw new Exception("Invalid data format at line " + lineNumber + " in " + file);
+                }
                 statement.executeUpdate();
             }
         } finally {
-            statement.close();
-            reader.close();
+            // Close the statement and reader
+            if (statement != null) {
+                statement.close();
+            }
+            if (reader != null) {
+                reader.close();
+            }
         }
     }
 
     public static void dropTable(Connection conn) {
         try (Statement stmt = conn.createStatement()) {
-            try {
-                stmt.executeUpdate("DROP TABLE Book_table");
-                System.out.println("Book_table dropped successfully.");
-            } catch (SQLException e) {
-                System.out.println("Book table does not exist.");
-            }
-
-            try {
-                stmt.executeUpdate("DROP TABLE Customer_table");
-                System.out.println("Customer_table dropped successfully.");
-            } catch (SQLException e) {
-                System.out.println("Customer table does not exist.");
-            }
-
-            try {
-                stmt.executeUpdate("DROP TABLE Order_table");
-                System.out.println("Order_table dropped successfully.");
-            } catch (SQLException e) {
-                System.out.println("Order table does not exist.");
-            }
-
-            try {
-                stmt.executeUpdate("DROP TABLE contain");
-                System.out.println("contain table dropped successfully.");
-            } catch (SQLException e) {
-                System.out.println("contain table does not exist.");
-            }
-
-            try {
-                stmt.executeUpdate("DROP TABLE make");
-                System.out.println("make table dropped successfully.");
-            } catch (SQLException e) {
-                System.out.println("make table does not exist.");
-            }
+            dropTable(conn, stmt, "Order_table");
+            dropTable(conn, stmt, "Book_table");
+            dropTable(conn, stmt, "Customer_table");
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+    }
+
+    private static void dropTable(Connection conn, Statement stmt, String tableName) {
+        try {
+            stmt.executeUpdate("DROP TABLE " + tableName);
+            System.out.println(tableName + " dropped successfully.");
+        } catch (SQLException e) {
+            System.out.println(tableName + " : drop error");
+            e.printStackTrace();
+
         }
     }
 
@@ -153,23 +131,39 @@ public class Database {
         try (Statement stmt = conn.createStatement()) {
             // Count the number of records in the Books table
             try (ResultSet rs = stmt.executeQuery("SELECT COUNT(*) FROM Book_table")) {
-                rs.next();
-                int numBooks = rs.getInt(1);
-                System.out.println("+ Database Records: Books (" + numBooks + ")");
+                if (rs.next()) {
+                    int numBooks = rs.getInt(1);
+                    System.out.println("+ Database Records: Books (" + numBooks + ")");
+                }
             }
 
             // Count the number of records in the Customers table
             try (ResultSet rs = stmt.executeQuery("SELECT COUNT(*) FROM Customer_table")) {
-                rs.next();
-                int numCustomers = rs.getInt(1);
-                System.out.println("+ Database Records: Customers (" + numCustomers + ")");
+                if (rs.next()) {
+                    int numCustomers = rs.getInt(1);
+                    System.out.println("+ Database Records: Customers (" + numCustomers + ")");
+                }
             }
 
             // Count the number of records in the Orders table
             try (ResultSet rs = stmt.executeQuery("SELECT COUNT(*) FROM Order_table")) {
-                rs.next();
-                int numOrders = rs.getInt(1);
-                System.out.println("+ Database Records: Orders (" + numOrders + ")");
+                if (rs.next()) {
+                    int numOrders = rs.getInt(1);
+                    System.out.println("+ Database Records: Orders (" + numOrders + ")");
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("SQL Exception: " + e.getMessage());
+        }
+    }
+
+    public static void showAllTables(Connection conn) {
+        String query = "SELECT table_name FROM user_tables";
+        try (Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(query)) {
+            System.out.println("All tables in the database:");
+            while (rs.next()) {
+                System.out.println(rs.getString("table_name"));
             }
         } catch (SQLException e) {
             System.out.println("SQL Exception: " + e.getMessage());
