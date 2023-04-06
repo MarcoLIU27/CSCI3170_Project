@@ -57,7 +57,7 @@ public class App {
                 }
             } catch (InputMismatchException e) {
                 System.out.println("Error: Please enter a valid integer");
-                scanner.nextLine(); // consume the invalid input
+                scanner.nextLine();
             }
         }
     }
