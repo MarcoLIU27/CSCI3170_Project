@@ -4,7 +4,6 @@ import java.sql.*;
 import java.io.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Scanner;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.InputMismatchException;
@@ -24,8 +23,8 @@ public class Database {
                     + "CONSTRAINT Title_format CHECK (NOT REGEXP_LIKE(Title, '%|_')),"
                     + "CONSTRAINT Authors_format CHECK (NOT REGEXP_LIKE(Authors, '%|_')))";
             stmt.executeUpdate(sql);
-            //System.out.println("Book table created successfully!");
-            //printTableColumns(conn, "Book_table");
+            System.out.println("Book table created successfully!");
+            // printTableColumns(conn, "Book_table");
 
             sql = "CREATE TABLE Customer_table ("
                     + "\"UID\" VARCHAR2(10) PRIMARY KEY,"
@@ -34,8 +33,8 @@ public class Database {
                     + "CONSTRAINT Name_format CHECK (NOT REGEXP_LIKE(\"Name\", '[%_]')),"
                     + "CONSTRAINT Address_format CHECK (NOT REGEXP_LIKE(\"Address\", '[%_]')))";
             stmt.executeUpdate(sql);
-            //System.out.println("Customer_table table created successfully!");
-            //printTableColumns(conn, "Customer_table");
+            System.out.println("Customer_table table created successfully!");
+            // printTableColumns(conn, "Customer_table");
 
             sql = "CREATE TABLE Order_table ("
                     + "\"OID\" VARCHAR2(8) NOT NULL CHECK (REGEXP_LIKE(\"OID\", '^[0-9]{8}$')),"
@@ -49,14 +48,13 @@ public class Database {
                     + "CONSTRAINT Order_table_fk_2 FOREIGN KEY (\"OrderISBN\") REFERENCES Book_table(\"ISBN\")"
                     + ")";
             stmt.executeUpdate(sql);
-            //System.out.println("Order_table table created successfully!");
-            //printTableColumns(conn, "Order_table");
-
+            System.out.println("Order_table table created successfully!");
+            // printTableColumns(conn, "Order_table");
+            System.out.println("All tables are created");
         } catch (SQLException e) {
-            System.out.println("CREATE TABLE Error: " + e.getMessage());
-        } finally {
-            System.out.println("Table created successfully!");
+            System.out.println("CREATE TABLE Error: Tables are already exist");
         }
+
     }
 
     public static void loadInitData(Connection conn) {
@@ -70,8 +68,7 @@ public class Database {
                     "\"OID\", \"UID\", \"OrderDate\", \"OrderISBN\", \"OrderQuantity\", \"ShippingStatus\"");
             System.out.println("Data files loaded successfully!");
         } catch (Exception e) {
-            System.err.println("Error loading data: " + e.getMessage());
-            e.printStackTrace();
+            System.err.println("there is an error in loading data files");
         }
     }
 
@@ -97,7 +94,7 @@ public class Database {
         } catch (IOException e) {
             System.err.println("Error reading file: " + e.getMessage());
         } finally {
-            //System.out.println("Book data loaded successfully.");
+            // System.out.println("Book data loaded successfully.");
             if (reader != null) {
                 try {
                     reader.close();
@@ -141,7 +138,7 @@ public class Database {
             }
         } finally {
             // Close the statement and reader
-            //System.out.println("Customer Data loaded successfully.");
+            // System.out.println("Customer Data loaded successfully.");
             if (statement != null) {
                 statement.close();
             }
@@ -192,7 +189,7 @@ public class Database {
         } catch (SQLException e) {
             System.err.println("Error inserting record: " + e.getMessage());
         } finally {
-            //System.out.println("Order Data loaded successfully.");
+            // System.out.println("Order Data loaded successfully.");
             if (reader != null) {
                 try {
                     reader.close();
@@ -210,26 +207,25 @@ public class Database {
         }
     }
 
-    
     public static void dropTable(Connection conn) {
         try (Statement stmt = conn.createStatement()) {
             dropTable(conn, stmt, "Order_table");
             dropTable(conn, stmt, "Book_table");
             dropTable(conn, stmt, "Customer_table");
+            System.out.println("All tables are droped");
         } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            System.out.println("Table droped successfully!");
+            System.out.println("Error dropping table: tables do not exist");
         }
+
     }
 
     private static void dropTable(Connection conn, Statement stmt, String tableName) {
         try {
             stmt.executeUpdate("DROP TABLE " + tableName);
-            //System.out.println(tableName + " dropped successfully.");
+            System.out.println(tableName + " dropped successfully.");
         } catch (SQLException e) {
-            System.out.println(tableName + " : drop error");
-            e.printStackTrace();
+            System.out.println(tableName + ": table does not exist");
+            // e.printStackTrace();
 
         }
     }
@@ -350,8 +346,7 @@ public class Database {
                             orderQuantity, orderStatus);
                 }
                 System.out.println();
-            }
-            else {
+            } else {
                 System.out.println("Error: Please enter a valid shipping status!\n");
                 System.out.println();
             }
@@ -361,21 +356,22 @@ public class Database {
     }
 
     public static void queryMostPopularBooks(Connection conn, int n) {
-        try {    
+        try {
             // Query the N most popular books
             String sql = "SELECT Book_table.ISBN, Title, Authors, Price, Inventory_Quantity, " +
-                        "SUM(Order_table.\"OrderQuantity\") as Total_Quantity_Sold " +
-                        "FROM Book_table " +
-                        "INNER JOIN Order_table ON Book_table.ISBN = Order_table.\"OrderISBN\" " +
-                        "GROUP BY Book_table.ISBN, Title, Authors, Price, Inventory_Quantity " +
-                        "ORDER BY Total_Quantity_Sold DESC " +
-                        "FETCH FIRST " + n + " ROWS ONLY";
-    
+                    "SUM(Order_table.\"OrderQuantity\") as Total_Quantity_Sold " +
+                    "FROM Book_table " +
+                    "INNER JOIN Order_table ON Book_table.ISBN = Order_table.\"OrderISBN\" " +
+                    "GROUP BY Book_table.ISBN, Title, Authors, Price, Inventory_Quantity " +
+                    "ORDER BY Total_Quantity_Sold DESC " +
+                    "FETCH FIRST " + n + " ROWS ONLY";
+
             Statement statement = conn.createStatement();
             ResultSet resultSet = statement.executeQuery(sql);
-    
+
             // Display the results with book information in detail
-            System.out.printf("%-20s%-50s%-50s%-10s%-15s%-15s\n", "ISBN", "Title", "Authors", "Price", "Inventory", "Total Sold");
+            System.out.printf("%-20s%-50s%-50s%-10s%-15s%-15s\n", "ISBN", "Title", "Authors", "Price", "Inventory",
+                    "Total Sold");
             while (resultSet.next()) {
                 String ISBN = resultSet.getString("ISBN");
                 String title = resultSet.getString("Title");
@@ -383,7 +379,8 @@ public class Database {
                 int price = resultSet.getInt("Price");
                 int inventory = resultSet.getInt("Inventory_Quantity");
                 int quantitySold = resultSet.getInt("Total_Quantity_Sold");
-                System.out.printf("%-20s%-50s%-50s%-10d%-15d%-15d\n", ISBN, title, authors, price, inventory, quantitySold);
+                System.out.printf("%-20s%-50s%-50s%-10d%-15d%-15d\n", ISBN, title, authors, price, inventory,
+                        quantitySold);
             }
             System.out.println();
         } catch (InputMismatchException e) {
@@ -419,12 +416,13 @@ public class Database {
                 System.out.println("Error: Book not found\n");
                 return;
             }
-    
+
             // Generate the order ID
             String orderID = generateOrderID(conn);
-    
+
             // Insert the order into the Order_table
-            String insertOrderSql = "INSERT INTO Order_table (\"OID\", \"UID\", \"OrderDate\", \"OrderISBN\", \"OrderQuantity\", \"ShippingStatus\") " +
+            String insertOrderSql = "INSERT INTO Order_table (\"OID\", \"UID\", \"OrderDate\", \"OrderISBN\", \"OrderQuantity\", \"ShippingStatus\") "
+                    +
                     "VALUES (?, ?, ?, ?, ?, ?)";
             PreparedStatement insertOrderStmt = conn.prepareStatement(insertOrderSql);
             insertOrderStmt.setString(1, orderID);
@@ -436,19 +434,20 @@ public class Database {
             int rowsUpdated = insertOrderStmt.executeUpdate();
             if (rowsUpdated == 1) {
                 System.out.println("Order placed successfully!");
-                System.out.println("Book with ISBN " + ISBN + " and quantity " + quantity + " added to order. Order ID: " + orderID);
+                System.out.println("Book with ISBN " + ISBN + " and quantity " + quantity
+                        + " added to order. Order ID: " + orderID);
                 System.out.println();
             } else {
                 System.out.println("Error: Failed to place order\n");
             }
-    
+
             // Update the inventory of the book
             String updateInventorySql = "UPDATE Book_table SET Inventory_Quantity = Inventory_Quantity - ? WHERE ISBN = ?";
             PreparedStatement updateInventoryStmt = conn.prepareStatement(updateInventorySql);
             updateInventoryStmt.setInt(1, quantity);
             updateInventoryStmt.setString(2, ISBN);
             updateInventoryStmt.executeUpdate();
-    
+
             // Schedule a task to update the shipping status to "shipped" after 30 seconds
             Timer timer = new Timer();
             timer.schedule(new TimerTask() {
@@ -464,7 +463,7 @@ public class Database {
                     }
                 }
             }, 30000);
-    
+
         } catch (SQLException e) {
             System.out.println("Error: " + e.getMessage());
         }
@@ -473,7 +472,7 @@ public class Database {
     public static String generateOrderID(Connection conn) {
         String sql = "SELECT COUNT(*) as count FROM Order_table";
         String orderID = null;
-    
+
         try {
             Statement statement = conn.createStatement();
             ResultSet resultSet = statement.executeQuery(sql);
@@ -484,7 +483,7 @@ public class Database {
         } catch (SQLException e) {
             System.out.println("Error: " + e.getMessage());
         }
-    
+
         return orderID;
     }
 
@@ -500,19 +499,19 @@ public class Database {
             }
             // Prepare the SQL query to retrieve the user's order history
             String sql = "SELECT Order_table.\"OID\", Order_table.\"OrderDate\", Order_table.\"OrderISBN\", " +
-                         "Book_table.Title, Order_table.\"OrderQuantity\", Order_table.\"ShippingStatus\" " +
-                         "FROM Order_table " +
-                         "JOIN Book_table ON Order_table.\"OrderISBN\" = Book_table.ISBN " +
-                         "WHERE Order_table.\"UID\" = ? " +
-                         "ORDER BY Order_table.\"OID\" DESC";
+                    "Book_table.Title, Order_table.\"OrderQuantity\", Order_table.\"ShippingStatus\" " +
+                    "FROM Order_table " +
+                    "JOIN Book_table ON Order_table.\"OrderISBN\" = Book_table.ISBN " +
+                    "WHERE Order_table.\"UID\" = ? " +
+                    "ORDER BY Order_table.\"OID\" DESC";
             PreparedStatement statement = conn.prepareStatement(sql);
             statement.setString(1, userID);
-    
+
             // Execute the query and display the results
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
                 System.out.printf("%-15s %-15s %-15s %-50s %-15s %-15s\n",
-                    "OID", "Order Date", "ISBN", "Title", "Quantity", "Shipping Status");
+                        "OID", "Order Date", "ISBN", "Title", "Quantity", "Shipping Status");
                 do {
                     String orderId = resultSet.getString("OID");
                     Date orderDate = resultSet.getDate("OrderDate");
@@ -521,7 +520,7 @@ public class Database {
                     int quantity = resultSet.getInt("OrderQuantity");
                     String status = resultSet.getString("ShippingStatus");
                     System.out.printf("%-15s %-15s %-15s %-50s %-15d %-15s\n",
-                        orderId, orderDate.toString(), isbn, title, quantity, status);
+                            orderId, orderDate.toString(), isbn, title, quantity, status);
                 } while (resultSet.next());
                 System.out.println();
             } else {
