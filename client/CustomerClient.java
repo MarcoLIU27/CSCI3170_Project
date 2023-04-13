@@ -108,7 +108,7 @@ public class CustomerClient implements ClientInterface {
     private void printSearchBookPage() {
         System.out.println("===== Welcome to Book Ordering Management System =====");
         LocalDateTime now = LocalDateTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         String formattedDate = now.format(formatter);
         System.out.println("+ System Date: " + formattedDate);
         Database.countRecords(conn);
@@ -123,7 +123,7 @@ public class CustomerClient implements ClientInterface {
     private void printCustomerPage() {
         System.out.println("===== Welcome to Book Ordering Management System =====");
         LocalDateTime now = LocalDateTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         String formattedDate = now.format(formatter);
         System.out.println("+ System Date: " + formattedDate);
         Database.countRecords(conn);

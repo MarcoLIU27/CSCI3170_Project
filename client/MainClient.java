@@ -56,7 +56,7 @@ public class MainClient implements ClientInterface{
     public void printMainPage() {
         System.out.println("===== Welcome to Book Ordering Management System =====");
         LocalDateTime now = LocalDateTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         String formattedDate = now.format(formatter);
         System.out.println("+ System Date: " + formattedDate);
         Database.countRecords(conn);
